@@ -26,8 +26,8 @@ continue        {return CONTINUE;}
 ;               {return SC;}
 \(              {return LPAREN;}
 \)              {return RPAREN;}
-\{              {return RBRACE;}
-\}              {return LBRACE;}
+\{              {return LBRACE;}
+\}              {return RBRACE;}
 =               {return ASSIGN;}
 ==|!=                                   {return RELOP_EQ;}
 >|<|<=|>=                               {return RELOP_REL;}
@@ -38,5 +38,5 @@ continue        {return CONTINUE;}
 \"([^\n\r\"\\]|\\[rnt"\\])+\"           {return STRING;}
 [ \n\t]	                                ;
 \/\/[^\r\n]*[ \r|\n|\r\n]?              ;
-.                                       {errorSyn(yylineno); exit(0);}
+.                                       {output::errorSyn(yylineno); exit(0);}
 

@@ -3,10 +3,11 @@
 %{
 	#include <iostream>
 	#include <stdlib.h>
+    #include "output.hpp"
 
 	using namespace std;
-
 	extern int yylex();
+    extern int yylineno;
 	int yyerror(const char * message);
 %}
 
@@ -19,6 +20,7 @@
 %left BINOP_ADD
 %left BINOP_MULT
 %right NOT
+%left LPAREN RPAREN LBRACE RBRACE
 %right ELSE
 
 %%
@@ -43,11 +45,12 @@ Statement       :       LBRACE Statements RBRACE {output::printProductionRule(4)
 Call            :       ID LPAREN Exp RPAREN {output::printProductionRule(15);}
                 ;
 Type            :       INT {output::printProductionRule(16);}
-                |       BOOL {output::printProductionRule(17);}
-                |       BYTE    {output::printProductionRule(18);}
+                |       BOOL {output::printProductionRule(18);}
+                |       BYTE    {output::printProductionRule(17);}
                 ;
 Exp             :       LPAREN Exp RPAREN       {output::printProductionRule(19);}
-                |       Exp BINOP Exp           {output::printProductionRule(20);}
+                |       Exp BINOP_MULT Exp           {output::printProductionRule(20);}
+                |       Exp BINOP_ADD Exp           {output::printProductionRule(20);}
                 |       ID                      {output::printProductionRule(21);}
                 |       Call                    {output::printProductionRule(22);}
                 |       NUM                     {output::printProductionRule(23);}
@@ -58,14 +61,9 @@ Exp             :       LPAREN Exp RPAREN       {output::printProductionRule(19)
                 |       NOT Exp                 {output::printProductionRule(28);}
                 |       Exp AND Exp             {output::printProductionRule(29);}
                 |       Exp OR Exp              {output::printProductionRule(30);}
-                |       Exp RELOP Exp           {output::printProductionRule(31);}
+                |       Exp RELOP_EQ Exp           {output::printProductionRule(31);}
+                |       Exp RELOP_REL Exp           {output::printProductionRule(31);}
                 |       LPAREN Type RPAREN Exp  {output::printProductionRule(32);}
-                ;
-BINOP           :       BINOP_ADD
-                |       BINOP_MULT
-                ;
-RELOP           :       RELOP_EQ
-                |       RELOP_REL
                 ;
 %%
 
@@ -76,6 +74,6 @@ int main()
 
 int yyerror(const char * message)
 {
-	errorSyn(output::yylineno);
+	output::errorSyn(yylineno);
 	exit(0);
 }
