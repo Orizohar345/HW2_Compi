@@ -1,10 +1,8 @@
 
 
 %{
-	#include "attributes.h"
 	#include <iostream>
 	#include <stdlib.h>
-	typedef enum { OP_AND, OP_OR } opType;
 
 	using namespace std;
 
@@ -12,7 +10,7 @@
 	int yyerror(const char * message);
 %}
 
-%token VOID INT BYTE B BOOL TRUE FALSE RETURN IF ELSE WHILE BREAK CONTINUE SC LPAREN RPAREN LBRACE RBRACE ID NUM STRING
+%token VOID INT BYTE B BOOL TRUE FALSE RETURN IF WHILE BREAK CONTINUE SC LPAREN RPAREN LBRACE RBRACE ID NUM STRING
 %right ASSIGN
 %left AND
 %left OR
@@ -21,45 +19,50 @@
 %left BINOP_ADD
 %left BINOP_MULT
 %right NOT
+%right ELSE
 
 %%
 
-Program         :       Statements;
-Statements      :       Statement
-                |       Statements Statement
+Program         :       Statements {output::printProductionRule(1);}
                 ;
-Statement       :       LBRACE Statements RBRACE
-                |       Type ID SC
-                |       TYPE ID ASSIGN Exp SC
-                |       ID ASSIGN Exp SC
-                |       Call SC
-                |       IF LPAREN Exp RPAREN Statement
-                |       IF LPAREN Exp RPAREN Statement ELSE Statement
-                |       WHILE LPAREN Exp RPAREN Statement
-                |       BREAK SC
-                |       CONTINUE SC
+Statements      :       Statement {output::printProductionRule(2);}
+                |       Statements Statement {output::printProductionRule(3);}
                 ;
-Call            :       ID LPAREN Exp RPAREN;
-Type            :       INT
-                |       TYPE
-                |       BOOL
+Statement       :       LBRACE Statements RBRACE {output::printProductionRule(4);}
+                |       Type ID SC {output::printProductionRule(5);}
+                |       Type ID ASSIGN Exp SC {output::printProductionRule(6);}
+                |       ID ASSIGN Exp SC {output::printProductionRule(7);}
+                |       Call SC {output::printProductionRule(8);}
+                |       RETURN SC  {output::printProductionRule(9);}
+                |       IF LPAREN Exp RPAREN Statement {output::printProductionRule(10);}
+                |       IF LPAREN Exp RPAREN Statement ELSE Statement {output::printProductionRule(11);}
+                |       WHILE LPAREN Exp RPAREN Statement {output::printProductionRule(12);}
+                |       BREAK SC {output::printProductionRule(13);}
+                |       CONTINUE SC {output::printProductionRule(14);}
                 ;
-Exp             :       LPAREN Exp RPAREN
-                |       Exp BINOP Exp
-                |       ID
-                |       Call
-                |       NUM
-                |       NUM B
-                |       STRING
-                |       TRUE
-                |       FALSE
-                |       NOT Exp
-                |       Exp AND Exp
-                |       Exp OR Exp
-                |       Exp RELOP Exp
-                |       LPAREN Type RPAREN Exp
-BINOP:          :       BINOP_ADD;
-                |       BINOP_MULT;
+Call            :       ID LPAREN Exp RPAREN {output::printProductionRule(15);}
+                ;
+Type            :       INT {output::printProductionRule(16);}
+                |       BOOL {output::printProductionRule(17);}
+                |       BYTE    {output::printProductionRule(18);}
+                ;
+Exp             :       LPAREN Exp RPAREN       {output::printProductionRule(19);}
+                |       Exp BINOP Exp           {output::printProductionRule(20);}
+                |       ID                      {output::printProductionRule(21);}
+                |       Call                    {output::printProductionRule(22);}
+                |       NUM                     {output::printProductionRule(23);}
+                |       NUM B                   {output::printProductionRule(24);}
+                |       STRING                  {output::printProductionRule(25);}
+                |       TRUE                    {output::printProductionRule(26);}
+                |       FALSE                   {output::printProductionRule(27);}
+                |       NOT Exp                 {output::printProductionRule(28);}
+                |       Exp AND Exp             {output::printProductionRule(29);}
+                |       Exp OR Exp              {output::printProductionRule(30);}
+                |       Exp RELOP Exp           {output::printProductionRule(31);}
+                |       LPAREN Type RPAREN Exp  {output::printProductionRule(32);}
+                ;
+BINOP           :       BINOP_ADD
+                |       BINOP_MULT
                 ;
 RELOP           :       RELOP_EQ
                 |       RELOP_REL
@@ -73,6 +76,6 @@ int main()
 
 int yyerror(const char * message)
 {
-	cout<<"Parse error: "<<message<<endl;
+	errorSyn(output::yylineno);
 	exit(0);
 }

@@ -29,14 +29,14 @@ continue        {return CONTINUE;}
 \{              {return RBRACE;}
 \}              {return LBRACE;}
 =               {return ASSIGN;}
-== | !=                                 {return RELOP_EQ;}
-< | > | <= | >=                         {return RELOP_REL;}
-- | +                                   {return BINOP_ADD;}
-/ | *                                   {return BINOP_MULT;}
+==|!=                                   {return RELOP_EQ;}
+>|<|<=|>=                               {return RELOP_REL;}
+\-|\+                                   {return BINOP_ADD;}
+\/|\*                                   {return BINOP_MULT;}
 [a-zA-Z][a-zA-Z0-9]*                    {return ID;}
-[0-9][1-9]* | 0                         {return NUM;}
-"([^\n\r\"\\]|\\[rnt"\\])+"             {return STRING;}
-[ \n\t]	;	// Whitespace
-//[^\r\n]*[ \r|\n|\r\n]? ; //Comments
-.                                       {errorSyn(yylineno)}
-%%
+[1-9][0-9]*|0                           {return NUM;}
+\"([^\n\r\"\\]|\\[rnt"\\])+\"           {return STRING;}
+[ \n\t]	                                ;
+\/\/[^\r\n]*[ \r|\n|\r\n]?              ;
+.                                       {errorSyn(yylineno); exit(0);}
+
